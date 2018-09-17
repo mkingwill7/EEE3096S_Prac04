@@ -204,15 +204,13 @@ def Read_All_Sensors():
 	#time.sleep(Delay)
 	
 	return data
-	
-	
 
 print("Environment Monitor")
 x = 1
 
 try: 
 	while True: 
-		if x == 1:
+		if x == 1
 			
 			First_5[0] = Read_All_Sensors()
 			time.sleep(Delay)
