@@ -19,9 +19,15 @@ Five_Recent = ["","","","",""]
 
 def Reset(channel):
 	print("Reset")
+	global Start_Time_H
+	Start_Time_H = int(time.strftime("%H", time.localtime()))
+	global Start_Time_M
+	Start_Time_M = int(time.strftime("%M"))
+	global Start_Time_S
+	Start_Time_S = int(time.strftime("%S"))
+	
 	
 def Frequency(channel):
-	print("Frequency")
 	
 	global Delay
 	global FrequencyIndex
@@ -32,25 +38,31 @@ def Frequency(channel):
 		
 	if FrequencyIndex == 0:
 		Delay = 0.5
+		print("Frequency = 0.5s")
 		
 	elif FrequencyIndex == 1:
 		Delay = 1
+		print("Frequency = 1s")
 		
 	elif FrequencyIndex == 2:
 		Delay = 2
+		print("Frequency = 2s")
 	
 	
 def Stop(channel):
-	print("Stop")
 	
 	global Run
 	if Run:
 		Run = 0
+		print("Stop")
+		time.sleep(60)
 	else:
 		Run = 1
+		print("Start")
 
 def Display(channel):
 	print("Display")
+	print("Time     Timer    Pot      Temp      Light")
 	print(Five_Recent[4])
 	print(Five_Recent[3])
 	print(Five_Recent[2])
@@ -88,6 +100,7 @@ GPIO.add_event_callback(DisplayPin, Display)
 # Open SPI bus
 spi = spidev.SpiDev() # create spi object 
 spi.open(0,0) 
+spi.max_speed_hz = 1000000 #adjust max speed of spi interface
 # RPI has one bus (#0) and two devices (#0 & #1) 
 
 # function to read ADC data from a channel 
@@ -125,17 +138,53 @@ Temp_channel = 0
 Pot_channel = 1
 Light_channel = 2
 
-Start_Time_H = time.strftime("%H")
-Start_Time_M = time.strftime("%M")
-Start_Time_S = time.strftime("%S")
+global Start_Time_H
+Start_Time_H = int(time.strftime("%H", time.localtime()))
+global Start_Time_M
+Start_Time_M = int(time.strftime("%M"))
+global Start_Time_S
+Start_Time_S = int(time.strftime("%S"))
 
-print("Time     Timer    Pot      Temp      Light"
+def Stopwatch():
+	global Start_Time_H
+	global Start_Time_M
+	global Start_Time_S
 	
+	Current_Time_H = int(time.strftime("%H", time.localtime()))
+	Current_Time_M = int(time.strftime("%M"))
+	Current_Time_S = int(time.strftime("%S"))
+	
+	Seconds_Elapsed = (Current_Time_H - Start_Time_H)*3600 + (Current_Time_M - Start_Time_M)*60 + (Current_Time_S - Start_Time_S)
+
+	Time_Elapsed_H = Seconds_Elapsed//3600
+	Seconds_Elapsed -= Time_Elapsed_H*3600
+	
+	Time_Elapsed_M = Seconds_Elapsed//60
+	Seconds_Elapsed -= Time_Elapsed_M*60
+	
+	Time_Elapsed_S = Seconds_Elapsed
+	Seconds_Elapsed -= Time_Elapsed_S
+	
+	Time_Elapsed_H = str(Time_Elapsed_H)
+	Time_Elapsed_M = str(Time_Elapsed_M)
+	Time_Elapsed_S = str(Time_Elapsed_S)
+	
+	if len(Time_Elapsed_H) < 2:
+		Time_Elapsed_H = "0"+Time_Elapsed_H
+	if len(Time_Elapsed_M) < 2:
+		Time_Elapsed_M = "0"+Time_Elapsed_M
+	if len(Time_Elapsed_S) < 2:
+		Time_Elapsed_S = "0"+Time_Elapsed_S
+		
+	return Time_Elapsed_H + ":" + Time_Elapsed_M + ":" + Time_Elapsed_S
+
+print("Environment Monitor")
+
 try: 
 	while True: 
 		if Run:
-			Current_Time = time.strftime("%H:%M:%S")
-			Timer_Time = "00:00:00"
+			Current_Time = time.strftime("%H:%M:%S", time.localtime())
+			Timer_Time = Stopwatch()
 			
 			# Read the data 
 			Temp_data = GetData(Temp_channel) 
@@ -152,6 +201,6 @@ try:
 			
 			# Wait before repeating loop 
 			time.sleep(Delay) 
-	
+		
 except KeyboardInterrupt: 
 	spi.close()
