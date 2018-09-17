@@ -65,7 +65,6 @@ def Stop(channel):
 	else:
 		Run = 1
 		print("Start")
-
 		for i in range(5):
 			First_5[i] = Read_All_Sensors()
 			time.sleep(Delay)
@@ -73,7 +72,6 @@ def Stop(channel):
 def Display(channel):
 	print("Display")
 	print("Time     Timer    Pot      Temp      Light")
-
 	for i in range(5):
 		print(First_5[i])
 
