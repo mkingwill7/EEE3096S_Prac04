@@ -114,7 +114,7 @@ GPIO.add_event_callback(DisplayPin, Display)
 # Open SPI bus
 spi = spidev.SpiDev() # create spi object 
 spi.open(0,0) 
-spi.max_speed_hz = 1000000 #adjust max speed of spi interface
+spi.max_speed_hz = 1000 #adjust max speed of spi interface
 # RPI has one bus (#0) and two devices (#0 & #1) 
 
 # function to read ADC data from a channel 
@@ -138,16 +138,7 @@ def ConvertLight(data):
 	light = (data * 100) / float(1023) 
 	light = round(light,0) 
 	return light
-
-# def Add_to_5_Recent(data):
-	# global Five_Recent
-	# Five_Recent[4] = Five_Recent[3]
-	# Five_Recent[3] = Five_Recent[2]
-	# Five_Recent[2] = Five_Recent[1]
-	# Five_Recent[1] = Five_Recent[0]
-	# Five_Recent[0] = data
-	
-# Define sensor channels 
+#Define sensor channels
 Temp_channel = 0 
 Pot_channel = 1
 Light_channel = 2
