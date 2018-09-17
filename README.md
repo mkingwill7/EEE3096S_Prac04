@@ -1,8 +1,8 @@
 # EEE3096S_Prac04
-The objective of practical 4 is to develop code for a simple environment monitor system.
-The system includes a temperature sensor (MCP9700A), a LDR (1K), a pot (1K), a
-MCP3008 IC and three switches.
-The monitor works as follow:
+The objective of practical 4 is to develop code for a simple environment monitor system./n
+The system includes a temperature sensor (MCP9700A), a LDR (1K), a pot (1K), a/n
+MCP3008 IC and three switches./n
+The monitor works as follow:/n
   • By default, the system continuously monitors the sensors every 500ms using this
     format:
     Time:     Timer:    Pot:  Temp:   Light:
