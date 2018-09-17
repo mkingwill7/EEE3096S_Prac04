@@ -29,8 +29,10 @@ def Reset(channel):
 	global Start_Time_S
 	Start_Time_S = int(time.strftime("%S"))
 	
-	clear = lambda: os.system("cls")
-	clear()
+	#clear = lambda: os.system("cls")
+	#clear()
+	print(20*"\n")
+	
 	
 def Frequency(channel):
 	
@@ -63,25 +65,17 @@ def Stop(channel):
 	else:
 		Run = 1
 		print("Start")
-		First_5[0] = Read_All_Sensors()
-		time.sleep(Delay)
-		First_5[1] = Read_All_Sensors()
-		time.sleep(Delay)
-		First_5[2] = Read_All_Sensors()
-		time.sleep(Delay)
-		First_5[3] = Read_All_Sensors()
-		time.sleep(Delay)
-		First_5[4] = Read_All_Sensors()
-		time.sleep(Delay)
+
+		for i in range(5):
+			First_5[i] = Read_All_Sensors()
+			time.sleep(Delay)
 
 def Display(channel):
 	print("Display")
 	print("Time     Timer    Pot      Temp      Light")
-	print(First_5[0])
-	print(First_5[1])
-	print(First_5[2])
-	print(First_5[3])
-	print(First_5[4])
+
+	for i in range(5):
+		print(First_5[i])
 
 GPIO.setmode(GPIO.BCM) # use GPIO pin numbering
 
@@ -114,7 +108,7 @@ GPIO.add_event_callback(DisplayPin, Display)
 # Open SPI bus
 spi = spidev.SpiDev() # create spi object 
 spi.open(0,0) 
-spi.max_speed_hz = 1000 #adjust max speed of spi interface
+spi.max_speed_hz = 1000000 #adjust max speed of spi interface
 # RPI has one bus (#0) and two devices (#0 & #1) 
 
 # function to read ADC data from a channel 
@@ -138,7 +132,16 @@ def ConvertLight(data):
 	light = (data * 100) / float(1023) 
 	light = round(light,0) 
 	return light
-#Define sensor channels
+
+# def Add_to_5_Recent(data):
+	# global Five_Recent
+	# Five_Recent[4] = Five_Recent[3]
+	# Five_Recent[3] = Five_Recent[2]
+	# Five_Recent[2] = Five_Recent[1]
+	# Five_Recent[1] = Five_Recent[0]
+	# Five_Recent[0] = data
+	
+# Define sensor channels 
 Temp_channel = 0 
 Pot_channel = 1
 Light_channel = 2
@@ -203,15 +206,14 @@ def Read_All_Sensors():
 	#time.sleep(Delay)
 	
 	return data
-	
-	
 
 print("Environment Monitor")
 x = 1
 
 try: 
 	while True: 
-		if x == 1:
+		if x == 1
+			
 			First_5[0] = Read_All_Sensors()
 			time.sleep(Delay)
 			First_5[1] = Read_All_Sensors()
@@ -221,8 +223,8 @@ try:
 			First_5[3] = Read_All_Sensors()
 			time.sleep(Delay)
 			First_5[4] = Read_All_Sensors()
-			time.sleep(Delay)
-			
+			#time.sleep(Delay)
+
 			x=2
 		else:
 			#Just keep busy - an empty "while True" seems to slow Pi down
