@@ -26,6 +26,8 @@ def Reset(channel):
 	global Start_Time_S
 	Start_Time_S = int(time.strftime("%S"))
 	
+	clear = lambda: os.system("cls")
+	clear()
 	
 def Frequency(channel):
 	
@@ -50,12 +52,11 @@ def Frequency(channel):
 	
 	
 def Stop(channel):
-	
+	#print("Stop/Start")
 	global Run
 	if Run:
 		Run = 0
 		print("Stop")
-		time.sleep(60)
 	else:
 		Run = 1
 		print("Start")
@@ -100,7 +101,7 @@ GPIO.add_event_callback(DisplayPin, Display)
 # Open SPI bus
 spi = spidev.SpiDev() # create spi object 
 spi.open(0,0) 
-spi.max_speed_hz = 1000000 #adjust max speed of spi interface
+spi.max_speed_hz = 1000 #adjust max speed of spi interface
 # RPI has one bus (#0) and two devices (#0 & #1) 
 
 # function to read ADC data from a channel 
@@ -116,7 +117,7 @@ def ConvertVolts(data):
 	return volts 
 	
 def ConvertTemp(data): 
-	temp = (data * 3.3) / float(1023) 
+	temp = (data * 330) / float(1023) - 50
 	temp = round(temp,0) 
 	return temp
 	
@@ -201,6 +202,8 @@ try:
 			
 			# Wait before repeating loop 
 			time.sleep(Delay) 
-		
+		else:
+			time.sleep(2)
+			
 except KeyboardInterrupt: 
 	spi.close()
