@@ -14,12 +14,24 @@ Delay = 0.5
 global Run
 Run = 1
 
-global Five_Recent
-Five_Recent = ["","","","",""]
-
 global First_5
 First_5 = ["","","","",""]
 
+# Variables to help with timing
+global Start_Time_H
+Start_Time_H = int(time.strftime("%H", time.localtime()))
+global Start_Time_M
+Start_Time_M = int(time.strftime("%M"))
+global Start_Time_S
+Start_Time_S = int(time.strftime("%S"))
+
+# Define sensor channels 
+Temp_channel = 0 
+Pot_channel = 1
+Light_channel = 2
+
+
+#Define Callbacks - functions called when buttons are pressed
 def Reset(channel):
 	print("Reset")
 	global Start_Time_H
@@ -29,13 +41,11 @@ def Reset(channel):
 	global Start_Time_S
 	Start_Time_S = int(time.strftime("%S"))
 	
-	#clear = lambda: os.system("cls")
-	#clear()
-	print(20*"\n")
+	# Only way I've found to clear screen
+	print(30*"\n")
 	
 	
 def Frequency(channel):
-	
 	global Delay
 	global FrequencyIndex
 	FrequencyIndex += 1
@@ -57,7 +67,6 @@ def Frequency(channel):
 	
 	
 def Stop(channel):
-	#print("Stop/Start")
 	global Run
 	if Run:
 		Run = 0
@@ -65,7 +74,6 @@ def Stop(channel):
 	else:
 		Run = 1
 		print("Start")
-
 		for i in range(5):
 			First_5[i] = Read_All_Sensors()
 			time.sleep(Delay)
@@ -73,10 +81,10 @@ def Stop(channel):
 def Display(channel):
 	print("Display")
 	print("Time     Timer    Pot      Temp      Light")
-
 	for i in range(5):
 		print(First_5[i])
 
+# Set up RPi
 GPIO.setmode(GPIO.BCM) # use GPIO pin numbering
 
 ResetPin = 5 
@@ -107,16 +115,15 @@ GPIO.add_event_callback(DisplayPin, Display)
 
 # Open SPI bus
 spi = spidev.SpiDev() # create spi object 
-spi.open(0,0) 
+spi.open(0,0) # RPI has one bus (#0) and two devices (#0 & #1) 
 spi.max_speed_hz = 1000000 #adjust max speed of spi interface
-# RPI has one bus (#0) and two devices (#0 & #1) 
 
 # function to read ADC data from a channel 
 def GetData(channel): # channel must be an integer 0-7 
 	adc = spi.xfer2([1,(8+channel)<<4,0]) # sending 3 bytes 
 	data = ((adc[1]&3) << 8) + adc[2] 
 	return data 
-	
+	 
 # functions to convert data to respective units 
 def ConvertVolts(data): 
 	volts = (data * 3.3) / float(1023) 
@@ -133,26 +140,7 @@ def ConvertLight(data):
 	light = round(light,0) 
 	return light
 
-# def Add_to_5_Recent(data):
-	# global Five_Recent
-	# Five_Recent[4] = Five_Recent[3]
-	# Five_Recent[3] = Five_Recent[2]
-	# Five_Recent[2] = Five_Recent[1]
-	# Five_Recent[1] = Five_Recent[0]
-	# Five_Recent[0] = data
-	
-# Define sensor channels 
-Temp_channel = 0 
-Pot_channel = 1
-Light_channel = 2
-
-global Start_Time_H
-Start_Time_H = int(time.strftime("%H", time.localtime()))
-global Start_Time_M
-Start_Time_M = int(time.strftime("%M"))
-global Start_Time_S
-Start_Time_S = int(time.strftime("%S"))
-
+# Other useful functions	
 def Stopwatch():
 	global Start_Time_H
 	global Start_Time_M
@@ -200,20 +188,18 @@ def Read_All_Sensors():
 	Light_data = GetData(Light_channel)
 	Light_percent = ConvertLight(Light_data)
 	
+	# Create string containing all data
 	data = Current_Time + " " + Timer_Time + " " + str(Pot_volts) + "V     " + str(Temp_degrees) + "C      " + str(Light_percent) + "%"
 	
-	# Wait before repeating loop 
-	#time.sleep(Delay)
-	
 	return data
-
+	
 print("Environment Monitor")
 x = 1
 
 try: 
 	while True: 
-		if x == 1
-			
+		if x == 1:
+			# Get first data set at startup
 			First_5[0] = Read_All_Sensors()
 			time.sleep(Delay)
 			First_5[1] = Read_All_Sensors()
